@@ -1,0 +1,34 @@
+<html>
+
+<head>
+	<meta charset="utf-8" />
+</head>
+
+<body>
+	<h1 class="title">I would gree you but I don't know your name yet</h1>
+	<script src="wasm_exec.js"></script>
+	<script>
+		window.addEventListener("message", (event) => {
+			console.log(event);
+			const user = JSON.parse(event.data);
+			document.querySelector('.title').innerHTML = `Hello ${user.name} ${user.surname}`;
+		});
+		const go = new Go(); // Defined in wasm_exec.js
+		const WASM_URL = 'main.wasm';
+
+		var wasm;
+
+		if ('instantiateStreaming' in WebAssembly) {
+			WebAssembly.instantiateStreaming(fetch(WASM_URL), go.importObject).then(function (obj) {
+				wasm = obj.instance;
+				console.log(wasm);
+				go.run(wasm);
+				setTimeout(() => {
+					sendMessage();
+				}, 3000);
+			});
+		}
+	</script>
+</body>
+
+</html>
